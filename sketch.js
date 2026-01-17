@@ -33,8 +33,8 @@ function setup() {
     
     // Build audio URLs
     const audioURLs = {
-        part1: `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/audio-part1.mp3`,
-        part2: `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/audio-part2.mp3`
+        part1: `https://github.com/nidalghETF/TLB-podcast/raw/refs/heads/main/audio-part1.mp3`,
+        part2: `https://github.com/nidalghETF/TLB-podcast/raw/refs/heads/main/audio-part2.mp3`
     };
     
     console.log('Loading audio from:', audioURLs);
