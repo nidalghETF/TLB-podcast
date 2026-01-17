@@ -32,10 +32,11 @@ function setup() {
     fft = new p5.FFT(0.8, 512);
     
     // Build audio URLs
-    const audioURLs = {
-        part1: `https://github.com/nidalghETF/TLB-podcast/raw/refs/heads/main/audio-part1.mp3`,
-        part2: `https://github.com/nidalghETF/TLB-podcast/raw/refs/heads/main/audio-part2.mp3`
-    };
+    // Build audio URLs - REPLACE WITH YOUR GOOGLE DRIVE LINKS
+const audioURLs = {
+    part1: 'https://drive.google.com/uc?export=download&id=1mC3gl5l7dD1mlJ5qhMsaneiu1lV5jWNg',
+    part2: 'https://drive.google.com/uc?export=download&id=1fwlHhXz6OsGYgsMYFQYUNjMNJMdQtcnV'
+};
     
     console.log('Loading audio from:', audioURLs);
     
