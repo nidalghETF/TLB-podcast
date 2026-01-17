@@ -107,22 +107,34 @@ async function loadAudioFiles(urls) {
 }
 
 async function loadAudioFallback(part, url) {
+    console.log(`Trying fallback method for ${part}...`);
+    
     return new Promise((resolve) => {
-        console.log(`Fallback loading for ${part}...`);
-        
-        // Create audio element directly
         const audioEl = new Audio();
         audioEl.crossOrigin = 'anonymous';
+        audioEl.preload = 'auto';
         audioEl.src = url;
         
         audioEl.addEventListener('canplaythrough', () => {
-            console.log(`Fallback loaded: ${part}`);
-            // Create p5.SoundFile from audio element
-            soundFiles[part] = new p5.SoundFile(audioEl, () => {
-                console.log(`Converted ${part} to p5.sound`);
+            console.log(`✓ Fallback loaded: ${part}`);
+            // Properly create a p5.SoundFile from the audio element
+            const soundFile = new p5.SoundFile(audioEl, () => {
+                soundFiles[part] = soundFile;
+                soundFiles[part].setVolume(0.8);
                 resolve(true);
             });
         });
+        
+        audioEl.addEventListener('error', (e) => {
+            console.error(`✗ Fallback failed for ${part}:`, e);
+            // DO NOT create placeholder objects
+            resolve(false);
+        });
+        
+        // Start loading
+        audioEl.load();
+    });
+}
         
         audioEl.addEventListener('error', (e) => {
             console.error(`Fallback failed for ${part}:`, e);
