@@ -145,6 +145,45 @@
             #canvasContainer { height: 350px; }
             .player-panel { padding: 1rem; }
         }
+        .part-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+    justify-content: center;
+}
+
+.part-btn {
+    background: #2d3748;
+    color: #cbd5e0;
+    border: 2px solid #4a5568;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.part-btn:hover {
+    background: #4a5568;
+    transform: translateY(-2px);
+}
+
+.part-btn.active {
+    background: linear-gradient(90deg, #00d4ff, #00ff88);
+    color: #0a0e17;
+    border-color: #00ff88;
+    font-weight: bold;
+}
+
+.playback-controls {
+    display: flex;
+    gap: 15px;
+    margin: 1rem 0;
+}
+
+#partIndicator {
+    color: #00ff88;
+    font-weight: bold;
+}
     </style>
 </head>
 <body>
