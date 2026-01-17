@@ -241,57 +241,90 @@
 
     <script src="sketch.js"></script>
     <script>
-        // DOM element references
-        const playBtn = document.getElementById('playBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const restartBtn = document.getElementById('restartBtn');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const progressBar = document.getElementById('progressBar');
-        const currentTimeEl = document.getElementById('currentTime');
-        const totalTimeEl = document.getElementById('totalTime');
+    // 1. DOM element references
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const progressBar = document.getElementById('progressBar');
+    const currentTimeEl = document.getElementById('currentTime');
+    const totalTimeEl = document.getElementById('totalTime');
 
-        // Format time as MM:SS
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    // 2. Helper to format time as MM:SS
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    // 3. Helper to get the current sound object from sketch.js
+    function getCurrentSound() {
+        // sketch.js uses 'soundFiles' object and 'currentPart' variable
+        if (window.soundFiles && window.currentPart) {
+            return window.soundFiles[window.currentPart];
         }
+        return null;
+    }
 
-        // Update progress bar and time display
-        function updateProgress() {
-            if (window.soundFile && window.soundFile.isLoaded()) {
-                const current = window.soundFile.currentTime();
-                const duration = window.soundFile.duration();
+    // 4. Update progress bar and time display (The Loop)
+    function updateUI() {
+        const sound = getCurrentSound();
+
+        if (sound && sound.isLoaded()) {
+            // Update Duration Labels
+            const current = sound.currentTime();
+            const duration = sound.duration();
+            
+            // Avoid dividing by zero
+            if (duration > 0) {
                 const progress = (current / duration) * 100;
-                
+                // Only update value if user isn't dragging it (optional refinement, but safer)
                 progressBar.value = progress;
+                
                 currentTimeEl.textContent = formatTime(current);
                 totalTimeEl.textContent = formatTime(duration);
             }
-            requestAnimationFrame(updateProgress);
         }
+        requestAnimationFrame(updateUI);
+    }
 
-        // Event listeners for buttons (will be connected in sketch.js)
-        playBtn.addEventListener('click', () => {
-            if (window.soundFile) window.soundFile.play();
-        });
-        pauseBtn.addEventListener('click', () => {
-            if (window.soundFile) window.soundFile.pause();
-        });
-        restartBtn.addEventListener('click', () => {
-            if (window.soundFile) {
-                window.soundFile.stop();
-                window.soundFile.play();
-            }
-        });
-        volumeSlider.addEventListener('input', (e) => {
-            if (window.soundFile) {
-                window.soundFile.setVolume(e.target.value / 100);
-            }
-        });
+    // 5. Event Listeners (The missing part!)
+    playBtn.addEventListener('click', () => {
+        const sound = getCurrentSound();
+        if (sound && sound.isLoaded() && !sound.isPlaying()) {
+            sound.play();
+        }
+    });
 
-        // Start progress updates
-        requestAnimationFrame(updateProgress);
-    </script>
+    pauseBtn.addEventListener('click', () => {
+        const sound = getCurrentSound();
+        if (sound && sound.isPlaying()) {
+            sound.pause();
+        }
+    });
+
+    restartBtn.addEventListener('click', () => {
+        const sound = getCurrentSound();
+        if (sound && sound.isLoaded()) {
+            sound.stop();
+            sound.play();
+        }
+    });
+
+    volumeSlider.addEventListener('input', (e) => {
+        // Update volume for ALL sounds so it doesn't jump when switching parts
+        if (window.soundFiles) {
+            const vol = e.target.value / 100;
+            // Loop through all parts in soundFiles and set volume
+            Object.values(window.soundFiles).forEach(s => {
+                if (s && s.setVolume) s.setVolume(vol);
+            });
+        }
+    });
+
+    // 6. Start the loop
+    requestAnimationFrame(updateUI);
+</script>
 </body>
 </html>
