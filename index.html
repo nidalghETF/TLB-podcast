@@ -11,13 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --bg-color: #0a0e17;
-            --accent-cyan: #00f3ff;
-            --accent-green: #00ff9d;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
+        :root { --bg-color: #0a0e17; --accent-cyan: #00f3ff; --accent-green: #00ff9d; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -28,170 +22,55 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
         }
 
-        /* --- HEADER --- */
-        header {
-            position: absolute;
-            top: 20px;
-            text-align: center;
-            z-index: 10;
-        }
-
+        header { position: absolute; top: 20px; text-align: center; z-index: 10; }
         h1 {
             font-family: 'Rajdhani', sans-serif;
             font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
         }
+        .subtitle { font-size: 0.9rem; color: #888; letter-spacing: 1px; }
 
-        .subtitle {
-            font-size: 0.9rem;
-            color: #888;
-            letter-spacing: 1px;
-            margin-top: 5px;
-        }
+        #canvasContainer { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* --- VISUALIZER CONTAINER --- */
-        #canvasContainer {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        /* --- PLAYER CONTROLS --- */
+        /* UI CONTROLS */
         .controls-wrapper {
-            position: absolute;
-            bottom: 40px;
-            width: 90%;
-            max-width: 600px;
-            background: rgba(10, 14, 23, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px 30px;
-            z-index: 20;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            position: absolute; bottom: 40px; width: 90%; max-width: 600px;
+            background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
+            padding: 20px 30px; z-index: 20;
+            display: flex; flex-direction: column; gap: 15px;
         }
-
-        /* Progress Bar */
-        .progress-container {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-family: 'Rajdhani', monospace;
-            font-size: 1rem;
-            color: var(--accent-cyan);
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #333;
-            border-radius: 3px;
-            outline: none;
-            cursor: pointer;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 10px var(--accent-green);
-        }
-
-        /* Buttons Row */
-        .btn-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-        }
-
+        .progress-container { display: flex; align-items: center; gap: 15px; font-family: 'Rajdhani', monospace; color: var(--accent-cyan); }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        
+        .btn-row { display: flex; justify-content: center; align-items: center; gap: 30px; }
         button {
-            background: none;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            padding: 10px 25px;
-            border-radius: 30px;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            letter-spacing: 1px;
+            background: none; border: 1px solid var(--accent-cyan); color: var(--accent-cyan);
+            padding: 10px 25px; border-radius: 30px; font-family: 'Rajdhani', sans-serif;
+            font-weight: 700; cursor: pointer; text-transform: uppercase;
         }
+        button:hover { background: var(--accent-cyan); color: #000; }
+        button.main-play { border-color: var(--accent-green); color: var(--accent-green); padding: 12px 40px; font-size: 1.2rem; }
+        button.main-play:hover { background: var(--accent-green); color: #000; }
 
-        button:hover {
-            background: var(--accent-cyan);
-            color: #000;
-            box-shadow: 0 0 15px var(--accent-cyan);
-        }
-
-        button.main-play {
-            padding: 12px 40px;
-            font-size: 1.2rem;
-            border-color: var(--accent-green);
-            color: var(--accent-green);
-        }
-        button.main-play:hover {
-            background: var(--accent-green);
-            color: #000;
-            box-shadow: 0 0 20px var(--accent-green);
-        }
-
-        /* Loading Overlay */
+        /* LOADING */
         #loadingScreen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 100;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
             transition: opacity 0.5s;
         }
-        .loader {
-            width: 50px; height: 50px;
-            border: 5px solid #333;
-            border-top: 5px solid var(--accent-cyan);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
     </style>
 </head>
 <body>
-
-    <div id="loadingScreen">
-        <div class="loader"></div>
-        <h3>INITIALIZING AUDIO STREAM...</h3>
-    </div>
-
-    <header>
-        <h1>TLB PODCAST</h1>
-        <div class="subtitle">REAL ESTATE & BLOCKCHAIN VISUALIZER</div>
-    </header>
-
+    <div id="loadingScreen"><h3>CONNECTING TO AUDIO STREAM...</h3></div>
+    <header><h1>TLB PODCAST</h1><div class="subtitle">REAL ESTATE & BLOCKCHAIN VISUALIZER</div></header>
     <div id="canvasContainer"></div>
 
     <div class="controls-wrapper">
@@ -200,7 +79,6 @@
             <input type="range" id="progressBar" value="0" step="0.1">
             <span id="totalTime">--:--</span>
         </div>
-
         <div class="btn-row">
             <button id="restartBtn">⏮ Reset</button>
             <button id="playBtn" class="main-play">Play</button>
@@ -210,7 +88,6 @@
             </div>
         </div>
     </div>
-
     <script src="sketch.js"></script>
 </body>
 </html>
