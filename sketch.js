@@ -127,7 +127,8 @@ async function loadAudioFallback(part, url) {
         
         audioEl.addEventListener('error', (e) => {
             console.error(`✗ Fallback failed for ${part}:`, e);
-            // DO NOT create placeholder objects
+            // Create a silent placeholder to prevent crashes
+            soundFiles[part] = new p5.SoundFile(); 
             resolve(false);
         });
         
