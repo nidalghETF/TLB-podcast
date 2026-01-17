@@ -134,49 +134,68 @@ function windowResized() {
 }
 
 // --- UI LOGIC ---
+// ... keep everything above this line ...
+
+// REPLACE THE 'setupUI' FUNCTION WITH THIS:
 function setupUI() {
     const playBtn = document.getElementById('playBtn');
     const restartBtn = document.getElementById('restartBtn');
     const slider = document.getElementById('progressBar');
     const volSlider = document.getElementById('volSlider');
 
-    // Play Button Logic
+    // PLAY BUTTON LOGIC
     playBtn.addEventListener('click', () => {
         if (!isReady) return;
-        
-        // Check if paused
+
+        // 1. WAKE UP THE AUDIO ENGINE (Crucial for Chrome/Safari)
+        userStartAudio().then(() => {
+            console.log("Audio Context Started");
+        });
+
+        // 2. TOGGLE PLAYBACK
+        // We access the native HTML element (.elt) to bypass p5.js glitches
         if (song.elt.paused) {
-            song.play();
-            playBtn.innerText = "PAUSE";
-            playBtn.classList.add("main-play-active");
+            song.elt.play()
+                .then(() => {
+                    console.log("Playback started");
+                    playBtn.innerText = "PAUSE";
+                    playBtn.classList.add("main-play-active");
+                })
+                .catch(e => console.error("Play blocked:", e));
         } else {
-            song.pause();
+            song.elt.pause();
+            console.log("Playback paused");
             playBtn.innerText = "PLAY";
             playBtn.classList.remove("main-play-active");
         }
     });
 
-    // Restart Button Logic
+    // RESTART BUTTON
     restartBtn.addEventListener('click', () => {
         if (!isReady) return;
         song.time(0);
         if (song.elt.paused) {
-            song.play();
+            song.elt.play();
             playBtn.innerText = "PAUSE";
+            playBtn.classList.add("main-play-active");
         }
     });
 
-    // Seek Logic
+    // SEEK BAR
     slider.addEventListener('input', () => {
         if (!isReady) return;
+        // Pause while dragging for smoother performance
         song.time(parseFloat(slider.value));
     });
 
-    // Volume Logic
+    // VOLUME SLIDER
     volSlider.addEventListener('input', () => {
-        if (song) song.volume(parseFloat(volSlider.value));
+        // Set volume on the native element (0.0 to 1.0)
+        if (song) song.elt.volume = parseFloat(volSlider.value);
     });
 }
+
+// ... keep updateProgressBar and formatTime below ...
 
 function updateProgressBar() {
     const slider = document.getElementById('progressBar');
